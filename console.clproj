@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="gb2312"?>
+<OSLProject Version="1.00" Name="console">
+	<Configurations>
+		<Configuration Name="Debug" BuildTools="1" ShowBuildToolOutput="-1">
+			<Tool Name="PreBuildEventTool"/>
+			<Tool Name="CustomBuildTool" CommandLine="hello"/>
+			<Tool Name="ClangAnalyzerTool" AnalyserBehavior="0" AdditionalOptions="-Wno-invalid-source-encoding"/>
+			<Tool Name="GCCCompilerTool" PreprocessorDefinitions="_DEBUG;_DUMP_MEMORY_LEAK_" GenerateDebugInformation="-1" LanguageStandard="c++11" GeneratePreprocessedFile="-1" AssemblerOutput="-1" WarningisError="-1"/>
+			<Tool Name="PreLinkEventTool"/>
+			<Tool Name="GCCLinkerTool" AdditionalDependencies="&quot;$(CLInstallDir)Dump\lib\tevation_memoryleak.o&quot;"/>
+			<Tool Name="PostBuildEventTool"/>
+		</Configuration>
+		<Configuration Name="Release" BuildTools="1" ShowBuildToolOutput="-1">
+			<Tool Name="PreBuildEventTool"/>
+			<Tool Name="CustomBuildTool"/>
+			<Tool Name="ClangAnalyzerTool" AnalyserBehavior="0" AdditionalOptions="-Wno-invalid-source-encoding"/>
+			<Tool Name="GCCCompilerTool" PreprocessorDefinitions="NDEBUG" LanguageStandard="c++11" GeneratePreprocessedFile="-1" AssemblerOutput="-1"/>
+			<Tool Name="PreLinkEventTool"/>
+			<Tool Name="GCCLinkerTool"/>
+			<Tool Name="PostBuildEventTool"/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter Name="头文件" Filter="h;hpp;hxx">
+			<File RelativePath=".\a.out.h">
+			</File>
+			<File RelativePath=".\console.h">
+			</File>
+		</Filter>
+		<Filter Name="源文件" Filter="cpp;c;cc;cxx">
+			<File RelativePath=".\console.cpp">
+			</File>
+		</Filter>
+	</Files>
+</OSLProject>
