@@ -1,7 +1,5 @@
-#include "console.h"
-#define BUF_SIZE 1024
-#define HEADER_LENGTH 32
-#define MAX(x,y)(x>y? x: y)
+#include "objfile.h"
+
 void test_endianness(void){
 	short test = 0x1234;
 	char* test_char = (char*)&test;
@@ -11,12 +9,41 @@ void test_endianness(void){
 	}
 }
 
-void cmd_ln_loop(void){
+void cmd_ln_loop(const objfile& file){
 	char cmd[51] = {0};
+	int quit = 0;
+	int length;
 	while (1){
 		std::cout<<"<-";
 		std::cin.getline(cmd,50);
-		std::cout<<"typed in "<<cmd<<std::endl;
+		length = strlen(cmd);
+		if (!cmd[0]){
+			continue;
+		}
+		std::string opr = strtok(cmd," ");
+		if (opr.length() == length) {
+			continue;
+		}
+		std::string operand;
+		if (opr == "la"){
+			std::string operand1 = strtok(NULL," ");
+			if (operand1.length() == length - opr.length()) continue;
+			std::string operand2 = strtok(NULL," ");
+			short line = (short)atoi(operand1.c_str());
+			int filename = atoi(operand2.c_str());
+			try{
+				int addr = file.l_to_a(line,filename);
+				printf("%d\n",addr);
+			}catch (std::string s){
+				std::cout<<s<<std::endl;
+			}			
+		}else if (opr == "al"){
+			operand = strtok(NULL," ");
+			int line = (short)atoi(operand.c_str());
+			printf("line %d of %s\n",file.a_to_l(line),(file.f_to_n(file.a_to_f(line))).c_str());	
+		}
+		if (quit) break;
+		Sleep(50);
 	}
 }
 
@@ -28,38 +55,8 @@ int main (int argc, char** argv){
 	}
 	*/
 	test_endianness();
-	unsigned int args[8];		
-	std::vector <char> buffer(HEADER_LENGTH);
-	const std::string filename("hello");
-	std::fstream filestream(filename,std::ios::binary|std::ios::in);
-	filestream.read(&buffer[0],32);
-	
-	//read the header word-wise
-	unsigned int* int_ptr = reinterpret_cast<unsigned int*> (&buffer[0]);
-	for (int i = 0; i < 8; ++i,++int_ptr){
-		args[i] = *int_ptr;
-	}
-	switch (args[0]){
-		case (0x10b):{
-			args[0] = ZMAGIC;
-			break;
-		}
-		case (0x107):{
-			args[0] = OMAGIC;
-			break;
-		}
-		case (0x108):{
-			args[0] = NMAGIC;
-			break;
-		}
-		default:break;	
-	};
-	struct exec e {args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7]};
-	filestream.seekg(0,std::ios_base::end);
-	size_t filesize = filestream.tellg();
-	filestream.seekg(HEADER_LENGTH);
-	buffer.resize(filesize);
-	filestream.read(&buffer[HEADER_LENGTH],filesize);
-	printf("%x\n",buffer[N_SYMOFF(e)]);
+	const std::string filename("hello_new");
+	objfile o(filename);
+	cmd_ln_loop(o);
 	return 0;
 }

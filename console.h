@@ -9,6 +9,12 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
+#include <string.h>
+#include <unordered_map>
+#include <map>
+#include <windows.h>
+#include <math.h>
+#include <string.h>
 // TODO: 在此处引用程序需要的其他头文件
 
 

@@ -26,6 +26,10 @@
 			</File>
 			<File RelativePath=".\console.h">
 			</File>
+			<File RelativePath=".\objfile.h">
+			</File>
+			<File RelativePath=".\stabs.h">
+			</File>
 		</Filter>
 		<Filter Name="Ô´ÎÄ¼þ" Filter="cpp;c;cc;cxx">
 			<File RelativePath=".\console.cpp">
