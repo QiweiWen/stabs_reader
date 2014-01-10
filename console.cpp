@@ -9,6 +9,23 @@ void test_endianness(void){
 	}
 }
 
+std::fstream& GotoLine(std::fstream& file, unsigned int num){
+    file.seekg(std::ios::beg);
+    for(int i=0; i < num - 1; ++i){
+        file.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+    }
+    return file;
+}
+
+std::string getLineFromFile(const std::string& fn, int lineNum){
+	std::fstream file (fn);
+	GotoLine(file, lineNum);
+	std::string line;
+	std::getline(file, line);
+	file.close();
+	return line;
+}
+
 void cmd_ln_loop(const objfile& file){
 	char cmd[51] = {0};
 	int quit = 0;
@@ -39,8 +56,12 @@ void cmd_ln_loop(const objfile& file){
 			}			
 		}else if (opr == "al"){
 			operand = strtok(NULL," ");
-			int line = (short)atoi(operand.c_str());
-			printf("line %d of %s\n",file.a_to_l(line),(file.f_to_n(file.a_to_f(line))).c_str());	
+			int addr = (short)atoi(operand.c_str());
+			int line = file.a_to_l(addr);
+			int filenum = file.a_to_f(addr);
+			std::string filename(file.f_to_n(filenum));
+			printf("line %d of %s\n",line,filename.c_str());
+			std::cout<<	getLineFromFile(filename, line)<<std::endl;
 		}
 		if (quit) break;
 		Sleep(50);

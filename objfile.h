@@ -11,9 +11,10 @@ struct symbol_entry{
 
 struct objfile{
 	public:
-	objfile(const std::string& file) :filestream(file,std::ios::binary|std::ios::in){
+	objfile(const std::string& file) {
 			unsigned int args[8];		
 			buffer.resize(HEADER_LENGTH);
+			std::fstream filestream(file,std::ios::binary|std::ios::in);
 			filestream.read(&buffer[0],HEADER_LENGTH);
 			
 			//read the header word-wise
@@ -64,6 +65,7 @@ struct objfile{
 						addr_to_line_table[currFile][
 							*reinterpret_cast<int*>(&buffer[0] + N_SYMOFF(e) + bytesRead + 8)
 						] = *reinterpret_cast<short*>(&buffer[0] + N_SYMOFF(e) + bytesRead + 6);
+						printf("%d\n",*reinterpret_cast<short*>(&buffer[0] + N_SYMOFF(e) + bytesRead + 6));
 					}else if ((unsigned char)buffer[N_SYMOFF(e) + bytesRead + 4] == 0x64){
 						currFile ++;
 						addr_to_file_table[
@@ -79,6 +81,7 @@ struct objfile{
 				}
 				bytesRead += 12;
 			}
+			filestream.close();
 	}//end of constructor
 	
 	unsigned char byteAt(int address){
@@ -116,6 +119,7 @@ struct objfile{
 	int a_to_l(int addr) const{
 		int fileNum = a_to_f(addr);
 		if (addr_to_line_table[fileNum].count (addr)){
+			
 			return addr_to_line_table[fileNum] [addr];
 		} else{
 			auto itr = addr_to_line_table[fileNum].begin();
@@ -143,10 +147,7 @@ struct objfile{
 		}
 	}
 	
-	~objfile(){
-		filestream.close();
-	}
-	
+
 	private:
 	std::vector<symbol_entry> legal_symbols;
 	mutable std::unordered_map<unsigned char,std::vector<symbol_entry>> lgl_sym_list;
@@ -156,7 +157,6 @@ struct objfile{
 	std::vector<char> buffer;
 	std::vector<std::string> filenum_to_name;
 	struct exec e;
-	std::fstream filestream;
 };
 
 
